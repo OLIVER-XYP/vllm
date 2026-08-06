@@ -677,7 +677,6 @@ class ParallelConfig:
                 "allgather_reducescatter",
                 "deepep_high_throughput",
                 "deepep_low_latency",
-                "deepep_v2",
                 "mori_high_throughput",
                 "mori_low_latency",
                 "nixl_ep",
@@ -1035,3 +1034,14 @@ class ParallelConfig:
             )
 
         return self
+
+    def reconfigure_for_independent_dp_rank(self) -> None:
+        """Reconfigure for a single independent non-MoE DP rank."""
+        # Capture these before changing DP fields.
+        nnodes = self.nnodes_within_dp
+        node_rank = self.node_rank_within_dp
+        self.data_parallel_size = 1
+        self.data_parallel_size_local = 1
+        self.data_parallel_rank = 0
+        self.nnodes = nnodes
+        self.node_rank = node_rank
